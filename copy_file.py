@@ -1,48 +1,57 @@
-import os
+﻿import os
 import shutil
 import sys
 from datetime import datetime
 
-def copy_file_to_repo(source_path):
-    """Copy file to current repository directory"""
-    
-    if not os.path.exists(source_path):
-        print(f"[ERROR] File not found: {source_path}")
+def safe_copy(src, dst_name=None):
+    """Копирует файл с проверкой и защитой от перезаписи"""
+    if not os.path.exists(src):
+        print(f"[ERROR] Файл не найден: {src}")
         return False
-    
-    if not os.path.isfile(source_path):
-        print(f"[ERROR] Path is not a file: {source_path}")
-        return False
-    
-    filename = os.path.basename(source_path)
-    dest_path = os.path.join(os.getcwd(), filename)
-    
-    if os.path.exists(dest_path):
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        name, ext = os.path.splitext(filename)
-        filename = f"{name}_{timestamp}{ext}"
-        dest_path = os.path.join(os.getcwd(), filename)
-        print(f"[WARNING] File already exists. Saved as: {filename}")
-    
-    try:
-        shutil.copy2(source_path, dest_path)
-        print(f"[SUCCESS] File copied: {filename}")
-        print(f"Source: {source_path}")
-        print(f"Destination: {dest_path}")
-        return True
-    except PermissionError:
-        print("[ERROR] Permission denied")
-        return False
-    except Exception as e:
-        print(f"[ERROR] Copy failed: {str(e)}")
+    if not os.path.isfile(src):
+        print(f"[ERROR] Это не файл: {src}")
         return False
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python copy_file.py <source_file_path>")
-        print("Example: python copy_file.py C:\\Users\\student\\test.txt")
-        sys.exit(1)
+    # Определяем имя назначения
+    if dst_name is None:
+        dst_name = os.path.basename(src)
     
-    source_file = sys.argv[1]
-    success = copy_file_to_repo(source_file)
-    sys.exit(0 if success else 1)
+    dst = dst_name
+    if os.path.exists(dst):
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        name, ext = os.path.splitext(dst)
+        dst = f"{name}_{ts}{ext}"
+        print(f"[ПРЕДУПРЕЖДЕНИЕ] Файл существует → сохранено как: {dst}")
+
+    try:
+        shutil.copy2(src, dst)
+        print(f"[УСПЕХ] Скопировано: {dst}")
+        return True
+    except PermissionError:
+        print("[ОШИБКА] Нет прав на запись")
+        return False
+    except Exception as e:
+        print(f"[ОШИБКА] {e}")
+        return False
+
+def main():
+    print("\n=== СКРИПТ КОПИРОВАНИЯ ФАЙЛОВ ===")
+    print("1. Скопировать один файл")
+    print("2. Выход")
+    
+    while True:
+        choice = input("\nВыберите действие (1/2): ").strip()
+        if choice == "1":
+            path = input("Введите полный путь к файлу: ").strip()
+            if path:
+                safe_copy(path)
+            else:
+                print("[ИНФО] Пустой путь.")
+        elif choice == "2":
+            print("Завершение работы.")
+            break
+        else:
+            print("[ИНФО] Неверный выбор. Повторите.")
+
+if __name__ == "__main__":
+    main()
