@@ -1,4 +1,3 @@
-# copy_file.py
 import os
 import shutil
 import sys

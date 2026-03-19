@@ -1,11 +1,12 @@
 ﻿import sys
 import os
-sys.path.insert(0, os.path.abspath('..'))
-
-from copy_file import safe_copy
+import tempfile
 
 def test_safe_copy_success():
-    import tempfile
+    # Добавляем корень проекта в PATH ВНУТРИ функции (после запуска)
+    sys.path.insert(0, os.path.abspath('..'))
+    from copy_file import safe_copy
+
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src.txt")
         with open(src, "w", encoding="utf-8") as f:
@@ -17,5 +18,8 @@ def test_safe_copy_success():
         os.remove(dst)
 
 def test_safe_copy_file_not_found():
+    sys.path.insert(0, os.path.abspath('..'))
+    from copy_file import safe_copy
+
     result = safe_copy("nonexistent_file_12345.txt")
     assert result is False
