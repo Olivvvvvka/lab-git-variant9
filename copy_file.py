@@ -1,10 +1,10 @@
-﻿import os
+# copy_file.py
+import os
 import shutil
 import sys
 from datetime import datetime
 
 def safe_copy(src):
-    """Копирует один файл с защитой от перезаписи"""
     if not os.path.exists(src):
         print(f"[ERROR] Файл не найден: {src}")
         return False
@@ -27,14 +27,8 @@ def safe_copy(src):
         print(f"[ОШИБКА] {e}")
         return False
 
-def main():
-    if len(sys.argv) < 2:
-        print("Использование: python copy_file.py <файл1> [файл2] [файл3] ...")
-        print("Пример: python copy_file.py C:\\temp\\a.txt C:\\docs\\b.pdf")
-        return
-
-    for path in sys.argv[1:]:
-        safe_copy(path.strip())
-
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) < 2:
+        print("Использование: python copy_file.py <путь_к_файлу>")
+        sys.exit(1)
+    safe_copy(sys.argv[1])
