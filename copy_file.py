@@ -3,6 +3,9 @@ import shutil
 import sys
 from datetime import datetime
 
+
+
+
 def safe_copy(src):
     if not os.path.exists(src):
         print(f"[ERROR] Файл не найден: {src}")
@@ -25,6 +28,9 @@ def safe_copy(src):
     except Exception as e:
         print(f"[ОШИБКА] {e}")
         return False
+
+
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
